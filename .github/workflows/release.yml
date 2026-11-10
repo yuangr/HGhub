@@ -151,8 +151,8 @@ jobs:
           if [ -z "${KEYSTORE_BASE64:-}" ]; then
             echo "::warning::未配置 ANDROID_KEY_BASE64，使用临时自签名证书签名 APK（后续升级若更换签名证书需卸载旧版重装）"
             KEY_ALIAS="hghub-temp"
-            STORE_PASSWORD="hghub-temp-store-pass"
-            KEY_PASSWORD="hghub-temp-key-pass"
+            STORE_PASSWORD="hghub-temp-pass"
+            KEY_PASSWORD="hghub-temp-pass"
             keytool -genkeypair -v \
               -keystore "$KS" \
               -storetype PKCS12 \
@@ -175,7 +175,7 @@ jobs:
               --ks-pass "pass:$STORE_PASSWORD" --key-pass "pass:$KEY_PASSWORD" \
               --v4-signing-enabled false \
               --out "$out" "$f"
-            "$APKSIGNER" verify --print-certs "$out" | head -3
+            "$APKSIGNER" verify --print-certs "$out" | sed -n '1,3p'
             found=$((found+1))
           done
           rm -f "$KS"
